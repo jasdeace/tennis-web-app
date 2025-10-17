@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tennis Court Availability</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
+        h1 { text-align: center; color: #333; }
+        table { width: 100%; max-width: 800px; margin: 20px auto; border-collapse: collapse; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #4CAF50; color: white; }
+        tr:hover { background-color: #f5f5f5; }
+        .loading { text-align: center; font-size: 18px; color: #555; }
+    </style>
+</head>
+<body>
+    <h1>Tennis Court Availability</h1>
+    <div id="loading" class="loading">Loading...</div>
+    <table id="availability-table" style="display: none;">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Facility</th>
+                <th>Date</th>
+                <th>Court</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody id="availability-body"></tbody>
+    </table>
+    <script>
+        async function fetchAvailability() {
+            try {
+                const response = await fetch('/api/availability');
+                const data = await response.json();
+                const tbody = document.getElementById('availability-body');
+                tbody.innerHTML = '';
+                if (data.error) {
+                    tbody.innerHTML = `<tr><td colspan="5">Error: ${data.error}</td></tr>`;
+                } else if (data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5">No availability found.</td></tr>';
+                } else {
+                    data.forEach(slot => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${slot.timestamp}</td>
+                            <td>${slot.facility}</td>
+                            <td>${slot.date}</td>
+                            <td>${slot.court}</td>
+                            <td>${slot.time}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('availability-table').style.display = 'table';
+            } catch (error) {
+                console.error('Error fetching availability:', error);
+                document.getElementById('loading').textContent = 'Error loading data.';
+            }
+        }
+        fetchAvailability();
+        setInterval(fetchAvailability, 300000);
+    </script>
+</body>
+</html>
