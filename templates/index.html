@@ -8,9 +8,9 @@
         body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background-color: #f4f4f4; }
         h1 { text-align: center; color: #333; font-size: 1.5em; margin-bottom: 10px; }
         .last-scan { text-align: center; font-size: 14px; color: #333; margin: 5px auto; padding: 5px; background-color: #fff; border-radius: 5px; }
-        .table-container { overflow-x: auto; } /* Enable horizontal scrolling on small screens */
-        table { width: 100%; min-width: 300px; border-collapse: collapse; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; vertical-align: middle; }
+        .table-container { overflow-x: auto; max-width: 390px; margin: 0 auto; } /* Fixed width of 390px */
+        table { width: 100%; min-width: 380px; border-collapse: collapse; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        th, td { padding: 5px; text-align: left; border-bottom: 1px solid #ddd; vertical-align: middle; } /* 5px padding on each side */
         th { background-color: #4CAF50; color: white; font-size: 16px; }
         td { font-size: 14px; }
         tr:hover { background-color: #f5f5f5; }
@@ -18,18 +18,19 @@
         @media (max-width: 600px) {
             h1 { font-size: 1.2em; }
             .last-scan { font-size: 12px; padding: 3px; }
-            table { min-width: 100%; font-size: 12px; }
-            th, td { padding: 6px; }
-            td:nth-child(2), td:nth-child(3) { display: block; width: 100%; } /* Stack Date and Avail. Time on mobile */
-            td:nth-child(4) { display: block; width: 100%; margin-top: 5px; } /* Separate Avail. Time */
+            table { min-width: 380px; font-size: 12px; }
+            th:nth-child(1), td:nth-child(1) { width: 80px; } /* Fac */
+            th:nth-child(2), td:nth-child(2) { width: 120px; } /* Date */
+            th:nth-child(3), td:nth-child(3) { width: 40px; } /* No */
+            th:nth-child(4), td:nth-child(4) { width: 140px; } /* Avail. Time */
             th:nth-child(2), th:nth-child(3), th:nth-child(4) { display: none; } /* Hide headers on mobile */
             tr { display: flex; flex-direction: column; border-bottom: 1px solid #ddd; padding: 5px 0; }
             tr:hover { background-color: transparent; }
             td:before { content: attr(data-label); font-weight: bold; margin-right: 5px; }
-            td[data-label="Fac"] { order: 1; }
-            td[data-label="Date"] { order: 2; }
-            td[data-label="No"] { order: 3; }
-            td[data-label="Avail. Time"] { order: 4; }
+            td[data-label="Fac"] { order: 1; width: 80px; }
+            td[data-label="Date"] { order: 2; width: 120px; }
+            td[data-label="No"] { order: 3; width: 40px; }
+            td[data-label="Avail. Time"] { order: 4; width: 140px; }
         }
     </style>
 </head>
