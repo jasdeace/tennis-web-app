@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>예약가능 시간표 </title>
+    <title>예약가능 시간표</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; text-align: center; }
         h1 { text-align: center; color: #333; }
         .timestamp { text-align: center; font-size: 16px; color: #333; margin: 10px auto; }
         table { width: 100%; max-width: 800px; margin: 20px auto; border-collapse: collapse; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #ddd; } /* Centered text */
         th { background-color: #4CAF50; color: white; }
         tr:hover { background-color: #f5f5f5; }
         .loading { text-align: center; font-size: 18px; color: #555; }
@@ -22,7 +22,7 @@
     <table id="availability-table" style="display: none;">
         <thead>
             <tr>
-                <th>시설명</th>
+                <th>시설</th>
                 <th>날짜</th>
                 <th>회차</th>
                 <th>시간</th>
@@ -40,10 +40,10 @@
                 tbody.innerHTML = '';
                 if (data.error) {
                     tbody.innerHTML = `<tr><td colspan="4">Error: ${data.error}</td></tr>`;
-                    timestampDiv.textContent = 'Timestamp: Error';
+                    timestampDiv.textContent = '마지막 스캔: Error';
                 } else if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4">No availability found.</td></tr>';
-                    timestampDiv.textContent = 'Timestamp: No data';
+                    tbody.innerHTML = '<tr><td colspan="4">예약가능 없음</td></tr>';
+                    timestampDiv.textContent = '마지막 스캔: 데이터 없음';
                 } else {
                     data.forEach(slot => {
                         const row = document.createElement('tr');
@@ -55,14 +55,14 @@
                         `;
                         tbody.appendChild(row);
                     });
-                    timestampDiv.textContent = `Timestamp: ${data[0].timestamp || 'Unknown'}`;
+                    timestampDiv.textContent = `마지막 스캔: ${data[0].timestamp || 'Unknown'}`;
                 }
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('availability-table').style.display = 'table';
             } catch (error) {
                 console.error('Error fetching availability:', error);
-                document.getElementById('loading').textContent = 'Error loading data.';
-                document.getElementById('timestamp').textContent = 'Timestamp: Error';
+                document.getElementById('loading').textContent = '데이터 로딩 오류';
+                document.getElementById('timestamp').textContent = '마지막 스캔: Error';
             }
         }
         fetchAvailability();
