@@ -13,7 +13,7 @@
         th { background-color: #4CAF50; color: white; }
         tr:hover { background-color: #f5f5f5; }
         .loading { text-align: center; font-size: 18px; color: #555; }
-        .popular { background-color: #ffff99; font-weight: bold; } /* Highlight popular times with yellow */
+        .popular { background-color: #ffff99; font-weight: bold; } /* Highlight entire row with yellow */
     </style>
 </head>
 <body>
@@ -23,7 +23,7 @@
     <table id="availability-table" style="display: none;">
         <thead>
             <tr>
-                <th>시설</th>
+                <th>시설명</th>
                 <th>날짜</th>
                 <th>회차</th>
                 <th>시간</th>
@@ -54,8 +54,9 @@
                             <td>${slot.facility}</td>
                             <td>${slot.date}</td>
                             <td>${slot.court}</td>
-                            <td${slot.popular ? ' class="popular"' : ''}>${slot.time}</td>
+                            <td>${slot.time}</td>
                         `;
+                        if (slot.popular) row.className = 'popular'; // Apply popular class to entire row
                         tbody.appendChild(row);
                     });
                     timestampDiv.textContent = `마지막 스캔: ${data[0].timestamp || 'Unknown'}`;
