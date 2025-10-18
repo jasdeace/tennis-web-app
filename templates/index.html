@@ -9,10 +9,11 @@
         h1 { text-align: center; color: #333; }
         .timestamp { text-align: center; font-size: 16px; color: #333; margin: 10px auto; }
         table { width: 100%; max-width: 800px; margin: 20px auto; border-collapse: collapse; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #ddd; } /* Centered text */
+        th, td { padding: 12px; text-align: center; border-bottom: 1px solid #ddd; }
         th { background-color: #4CAF50; color: white; }
         tr:hover { background-color: #f5f5f5; }
         .loading { text-align: center; font-size: 18px; color: #555; }
+        .popular { background-color: #ffff99; font-weight: bold; } /* Highlight popular times with yellow */
     </style>
 </head>
 <body>
@@ -42,16 +43,18 @@
                     tbody.innerHTML = `<tr><td colspan="4">Error: ${data.error}</td></tr>`;
                     timestampDiv.textContent = '마지막 스캔: Error';
                 } else if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4">예약가능 없음</td></tr>';
+                    tbody.innerHTML = `<tr><td colspan="4">예약가능 없음</td></tr>`;
                     timestampDiv.textContent = '마지막 스캔: 데이터 없음';
                 } else {
+                    // Sort by popular (1) first, then by timestamp
+                    data.sort((a, b) => b.popular - a.popular || a.timestamp.localeCompare(b.timestamp));
                     data.forEach(slot => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td>${slot.facility}</td>
                             <td>${slot.date}</td>
                             <td>${slot.court}</td>
-                            <td>${slot.time}</td>
+                            <td${slot.popular ? ' class="popular"' : ''}>${slot.time}</td>
                         `;
                         tbody.appendChild(row);
                     });
