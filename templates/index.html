@@ -5,18 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tennis Court Availability</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
-        h1 { text-align: center; color: #333; }
-        .last-scan { text-align: center; font-size: 16px; color: #333; margin: 10px auto; }
-        table { width: 100%; max-width: 800px; margin: 20px auto; border-collapse: collapse; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; white-space: nowrap; } /* Reduced padding, nowrap for mobile */
-        th { background-color: #4CAF50; color: white; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background-color: #f4f4f4; }
+        h1 { text-align: center; color: #333; font-size: 1.5em; margin-bottom: 10px; }
+        .last-scan { text-align: center; font-size: 14px; color: #333; margin: 5px auto; padding: 5px; background-color: #fff; border-radius: 5px; }
+        .table-container { overflow-x: auto; } /* Enable horizontal scrolling on small screens */
+        table { width: 100%; min-width: 300px; border-collapse: collapse; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; vertical-align: middle; }
+        th { background-color: #4CAF50; color: white; font-size: 16px; }
+        td { font-size: 14px; }
         tr:hover { background-color: #f5f5f5; }
-        .loading { text-align: center; font-size: 18px; color: #555; }
+        .loading { text-align: center; font-size: 16px; color: #555; margin: 10px 0; }
         @media (max-width: 600px) {
-            th, td { font-size: 14px; padding: 6px; } /* Smaller text and padding for mobile */
-            table { font-size: 14px; } /* Adjust table font size */
-            td:nth-child(2), td:nth-child(3) { display: inline-block; width: 45%; } /* Combine Date and Avail. Time on one line */
+            h1 { font-size: 1.2em; }
+            .last-scan { font-size: 12px; padding: 3px; }
+            table { min-width: 100%; font-size: 12px; }
+            th, td { padding: 6px; }
+            td:nth-child(2), td:nth-child(3) { display: block; width: 100%; } /* Stack Date and Avail. Time on mobile */
+            td:nth-child(4) { display: block; width: 100%; margin-top: 5px; } /* Separate Avail. Time */
+            th:nth-child(2), th:nth-child(3), th:nth-child(4) { display: none; } /* Hide headers on mobile */
+            tr { display: flex; flex-direction: column; border-bottom: 1px solid #ddd; padding: 5px 0; }
+            tr:hover { background-color: transparent; }
+            td:before { content: attr(data-label); font-weight: bold; margin-right: 5px; }
+            td[data-label="Fac"] { order: 1; }
+            td[data-label="Date"] { order: 2; }
+            td[data-label="No"] { order: 3; }
+            td[data-label="Avail. Time"] { order: 4; }
         }
     </style>
 </head>
@@ -24,17 +37,19 @@
     <h1>Tennis Court Availability</h1>
     <div id="last-scan" class="last-scan">Last scan: Loading...</div>
     <div id="loading" class="loading">Loading...</div>
-    <table id="availability-table" style="display: none;">
-        <thead>
-            <tr>
-                <th>Fac</th>
-                <th>Date</th>
-                <th>No</th>
-                <th>Avail. Time</th>
-            </tr>
-        </thead>
-        <tbody id="availability-body"></tbody>
-    </table>
+    <div class="table-container">
+        <table id="availability-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Fac</th>
+                    <th>Date</th>
+                    <th>No</th>
+                    <th>Avail. Time</th>
+                </tr>
+            </thead>
+            <tbody id="availability-body"></tbody>
+        </table>
+    </div>
     <script>
         async function fetchAvailability() {
             try {
@@ -53,10 +68,10 @@
                     data.forEach(slot => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${slot.facility}</td>
-                            <td>${slot.date}</td>
-                            <td>${slot.court}</td>
-                            <td>${slot.time}</td>
+                            <td data-label="Fac">${slot.facility}</td>
+                            <td data-label="Date">${slot.date}</td>
+                            <td data-label="No">${slot.court}</td>
+                            <td data-label="Avail. Time">${slot.time}</td>
                         `;
                         tbody.appendChild(row);
                     });
