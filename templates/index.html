@@ -3,92 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tennis Court Availability</title>
+    <title>예약가능 시간표 </title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
-        h1 { text-align: center; color: #333; font-size: 1.5em; margin-bottom: 5px; }
-        .last-scan { text-align: center; font-size: 12px; color: #333; margin: 5px auto; padding: 2px; background-color: #fff; border-radius: 3px; }
-        .table-container { overflow-x: auto; max-width: 100%; margin: 0 auto; }
-        table { width: 100%; min-width: 370px; border-collapse: collapse; background-color: #fff; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
-        th, td { text-align: left; border-bottom: 1px solid #ddd; vertical-align: middle; }
-        th { background-color: #4CAF50; color: white; font-size: 14px; }
-        td { font-size: 12px; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
+        h1 { text-align: center; color: #333; }
+        .timestamp { text-align: center; font-size: 16px; color: #333; margin: 10px auto; }
+        table { width: 100%; max-width: 800px; margin: 20px auto; border-collapse: collapse; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #4CAF50; color: white; }
         tr:hover { background-color: #f5f5f5; }
-        .loading { text-align: center; font-size: 14px; color: #555; margin: 5px 0; }
-        @media (max-width: 600px) {
-            h1 { font-size: 1.2em; }
-            .last-scan { font-size: 10px; padding: 1px; }
-            table { min-width: 370px; }
-            th { display: none; }
-            td { display: inline-block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-            td:nth-child(1) { width: 20%; min-width: 74px; } /* Fac: ~74px at 370px */
-            td:nth-child(2) { width: 31%; min-width: 115px; } /* Date: ~115px at 370px */
-            td:nth-child(3) { width: 11%; min-width: 41px; } /* No: ~41px at 370px */
-            td:nth-child(4) { width: 38%; min-width: 140px; } /* Avail. Time: ~140px at 370px */
-            tr { display: block; padding: 2px 0; border-bottom: 1px solid #ddd; }
-            tr:hover { background-color: transparent; }
-            td:before { content: attr(data-label); font-weight: bold; margin-right: 2px; }
-        }
-        @media (max-width: 370px) {
-            table { min-width: 100%; }
-            td { font-size: 10px; }
-            td:nth-child(1) { min-width: 60px; }
-            td:nth-child(2) { min-width: 90px; }
-            td:nth-child(3) { min-width: 30px; }
-            td:nth-child(4) { min-width: 100px; }
-        }
+        .loading { text-align: center; font-size: 18px; color: #555; }
     </style>
 </head>
 <body>
     <h1>Tennis Court Availability</h1>
-    <div id="last-scan" class="last-scan">Last scan: Loading...</div>
+    <div id="timestamp" class="timestamp">마지막 스캔: Loading...</div>
     <div id="loading" class="loading">Loading...</div>
-    <div class="table-container">
-        <table id="availability-table" style="display: none;">
-            <thead>
-                <tr>
-                    <th>Fac</th>
-                    <th>Date</th>
-                    <th>No</th>
-                    <th>Avail. Time</th>
-                </tr>
-            </thead>
-            <tbody id="availability-body"></tbody>
-        </table>
-    </div>
+    <table id="availability-table" style="display: none;">
+        <thead>
+            <tr>
+                <th>시설명</th>
+                <th>날짜</th>
+                <th>회차</th>
+                <th>시간</th>
+            </tr>
+        </thead>
+        <tbody id="availability-body"></tbody>
+    </table>
     <script>
         async function fetchAvailability() {
             try {
                 const response = await fetch('/api/availability');
                 const data = await response.json();
                 const tbody = document.getElementById('availability-body');
-                const lastScanDiv = document.getElementById('last-scan');
+                const timestampDiv = document.getElementById('timestamp');
                 tbody.innerHTML = '';
                 if (data.error) {
                     tbody.innerHTML = `<tr><td colspan="4">Error: ${data.error}</td></tr>`;
-                    lastScanDiv.textContent = 'Last scan: Error';
+                    timestampDiv.textContent = 'Timestamp: Error';
                 } else if (data.length === 0) {
                     tbody.innerHTML = '<tr><td colspan="4">No availability found.</td></tr>';
-                    lastScanDiv.textContent = 'Last scan: No data';
+                    timestampDiv.textContent = 'Timestamp: No data';
                 } else {
                     data.forEach(slot => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td data-label="Fac">${slot.facility}</td>
-                            <td data-label="Date">${slot.date}</td>
-                            <td data-label="No">${slot.court}</td>
-                            <td data-label="Avail. Time">${slot.time}</td>
+                            <td>${slot.facility}</td>
+                            <td>${slot.date}</td>
+                            <td>${slot.court}</td>
+                            <td>${slot.time}</td>
                         `;
                         tbody.appendChild(row);
                     });
-                    lastScanDiv.textContent = `Last scan: ${data[0].last_scan || 'Unknown'}`;
+                    timestampDiv.textContent = `Timestamp: ${data[0].timestamp || 'Unknown'}`;
                 }
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('availability-table').style.display = 'table';
             } catch (error) {
                 console.error('Error fetching availability:', error);
                 document.getElementById('loading').textContent = 'Error loading data.';
-                document.getElementById('last-scan').textContent = 'Last scan: Error';
+                document.getElementById('timestamp').textContent = 'Timestamp: Error';
             }
         }
         fetchAvailability();
