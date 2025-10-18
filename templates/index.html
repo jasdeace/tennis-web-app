@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tennis Court Availability</title>
+    <title>테니스 예약가능 시간표</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 10px; background-color: #f4f4f4; }
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4; }
         h1 { text-align: center; color: #333; font-size: 1.5em; margin-bottom: 10px; }
         .last-scan { text-align: center; font-size: 14px; color: #333; margin: 5px auto; padding: 5px; background-color: #fff; border-radius: 5px; }
-        .table-container { overflow-x: auto; max-width: 390px; margin: 0 auto; } /* Fixed width of 390px */
+        .table-container { overflow-x: auto; max-width: 100%; margin: 0 auto; } /* Responsive max-width */
         table { width: 100%; min-width: 380px; border-collapse: collapse; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        th, td { padding: 5px; text-align: left; border-bottom: 1px solid #ddd; vertical-align: middle; } /* 5px padding */
+        th, td { text-align: left; border-bottom: 1px solid #ddd; vertical-align: middle; } /* Removed padding */
         th { background-color: #4CAF50; color: white; font-size: 16px; }
         td { font-size: 14px; }
         tr:hover { background-color: #f5f5f5; }
@@ -20,29 +20,37 @@
             .last-scan { font-size: 12px; padding: 3px; }
             table { min-width: 380px; font-size: 12px; }
             th { display: none; } /* Hide headers on mobile */
-            td { display: inline-block; padding: 5px; } /* Keep all fields in one row */
-            td:nth-child(1) { width: 80px; } /* Fac */
-            td:nth-child(2) { width: 120px; } /* Date */
-            td:nth-child(3) { width: 40px; } /* No */
-            td:nth-child(4) { width: 140px; } /* Avail. Time */
+            td { display: inline-block; } /* Keep all fields in one row */
+            td:nth-child(1) { width: 20.5%; min-width: 80px; } /* Fac: ~80px at 390px */
+            td:nth-child(2) { width: 30.8%; min-width: 120px; } /* Date: ~120px at 390px */
+            td:nth-child(3) { width: 10.3%; min-width: 40px; } /* No: ~40px at 390px */
+            td:nth-child(4) { width: 35.9%; min-width: 140px; } /* Avail. Time: ~140px at 390px */
             tr { display: block; padding: 5px 0; border-bottom: 1px solid #ddd; }
             tr:hover { background-color: transparent; }
             td:before { content: attr(data-label); font-weight: bold; margin-right: 5px; }
         }
+        @media (max-width: 390px) {
+            table { min-width: 100%; } /* Allow full width on very small screens */
+            td { font-size: 10px; } /* Smaller text for tiny screens */
+            td:nth-child(1) { min-width: 60px; }
+            td:nth-child(2) { min-width: 90px; }
+            td:nth-child(3) { min-width: 30px; }
+            td:nth-child(4) { min-width: 100px; }
+        }
     </style>
 </head>
 <body>
-    <h1>Tennis Court Availability</h1>
-    <div id="last-scan" class="last-scan">Last scan: Loading...</div>
+    <h1>테니스 예약가능 시간표</h1>
+    <div id="last-scan" class="last-scan">조회시간: </div>
     <div id="loading" class="loading">Loading...</div>
     <div class="table-container">
         <table id="availability-table" style="display: none;">
             <thead>
                 <tr>
-                    <th>Fac</th>
-                    <th>Date</th>
-                    <th>No</th>
-                    <th>Avail. Time</th>
+                    <th>시설</th>
+                    <th>날짜</th>
+                    <th>번호</th>
+                    <th>시간</th>
                 </tr>
             </thead>
             <tbody id="availability-body"></tbody>
