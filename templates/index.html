@@ -7,24 +7,30 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
         h1 { text-align: center; color: #333; }
+        .last-scan { text-align: center; font-size: 16px; color: #333; margin: 10px auto; }
         table { width: 100%; max-width: 800px; margin: 20px auto; border-collapse: collapse; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; white-space: nowrap; } /* Reduced padding, nowrap for mobile */
         th { background-color: #4CAF50; color: white; }
         tr:hover { background-color: #f5f5f5; }
         .loading { text-align: center; font-size: 18px; color: #555; }
+        @media (max-width: 600px) {
+            th, td { font-size: 14px; padding: 6px; } /* Smaller text and padding for mobile */
+            table { font-size: 14px; } /* Adjust table font size */
+            td:nth-child(2), td:nth-child(3) { display: inline-block; width: 45%; } /* Combine Date and Avail. Time on one line */
+        }
     </style>
 </head>
 <body>
     <h1>Tennis Court Availability</h1>
+    <div id="last-scan" class="last-scan">Last scan: Loading...</div>
     <div id="loading" class="loading">Loading...</div>
     <table id="availability-table" style="display: none;">
         <thead>
             <tr>
-                <th>Timestamp</th>
-                <th>Facility</th>
+                <th>Fac</th>
                 <th>Date</th>
-                <th>Court</th>
-                <th>Time</th>
+                <th>No</th>
+                <th>Avail. Time</th>
             </tr>
         </thead>
         <tbody id="availability-body"></tbody>
@@ -35,16 +41,18 @@
                 const response = await fetch('/api/availability');
                 const data = await response.json();
                 const tbody = document.getElementById('availability-body');
+                const lastScanDiv = document.getElementById('last-scan');
                 tbody.innerHTML = '';
                 if (data.error) {
-                    tbody.innerHTML = `<tr><td colspan="5">Error: ${data.error}</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="4">Error: ${data.error}</td></tr>`;
+                    lastScanDiv.textContent = 'Last scan: Error';
                 } else if (data.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5">No availability found.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="4">No availability found.</td></tr>';
+                    lastScanDiv.textContent = 'Last scan: No data';
                 } else {
                     data.forEach(slot => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${slot.timestamp}</td>
                             <td>${slot.facility}</td>
                             <td>${slot.date}</td>
                             <td>${slot.court}</td>
@@ -52,12 +60,14 @@
                         `;
                         tbody.appendChild(row);
                     });
+                    lastScanDiv.textContent = `Last scan: ${data[0].last_scan || 'Unknown'}`;
                 }
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('availability-table').style.display = 'table';
             } catch (error) {
                 console.error('Error fetching availability:', error);
                 document.getElementById('loading').textContent = 'Error loading data.';
+                document.getElementById('last-scan').textContent = 'Last scan: Error';
             }
         }
         fetchAvailability();
