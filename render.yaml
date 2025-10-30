@@ -1,7 +1,6 @@
-services:
-  - type: web
-    name: tennis-web-app
-    env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn -w 4 -b 0.0.0.0:$PORT app:app
-    plan: free
+type: web
+name: tennis-web
+static:
+  buildCommand: echo "No build"
+  publishDirectory: .
+plan: free

@@ -35,6 +35,7 @@
         async function fetchAvailability() {
             try {
                 const response = await fetch('http://129.154.57.126:5000/api/availability');
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
                 const tbody = document.getElementById('availability-body');
                 const timestampDiv = document.getElementById('timestamp');
@@ -46,8 +47,6 @@
                     tbody.innerHTML = `<tr><td colspan="4">예약가능 없음</td></tr>`;
                     timestampDiv.textContent = '마지막 스캔: 데이터 없음';
                 } else {
-                    // Sort by popular (1) first, then by timestamp
-                    data.sort((a, b) => b.popular - a.popular || a.timestamp.localeCompare(b.timestamp));
                     data.forEach(slot => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
@@ -56,7 +55,6 @@
                             <td>${slot.court}</td>
                             <td>${slot.time}</td>
                         `;
-                        if (slot.popular) row.className = 'popular'; // Apply popular class to entire row
                         tbody.appendChild(row);
                     });
                     timestampDiv.textContent = `마지막 스캔: ${data[0].timestamp || 'Unknown'}`;
