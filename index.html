@@ -33,7 +33,7 @@
     <script>
         async function fetchAvailability() {
             try {
-                const response = await fetch('http://129.154.57.126:5000/api/availability');
+                const response = await fetch('https://129.154.57.126:5000/api/availability', { mode: 'no-cors' });
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
                 const tbody = document.getElementById('availability-body');
