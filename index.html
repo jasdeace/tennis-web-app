@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,13 +13,13 @@
         th { background-color: #4CAF50; color: white; }
         tr:hover { background-color: #f5f5f5; }
         .loading { text-align: center; font-size: 18px; color: #555; }
-        .popular { background-color: #fff9c4 !important; font-weight: bold; } /* ← HIGHLIGHT */
+        .popular { background-color: #fff9c4 !important; font-weight: bold; }
     </style>
 </head>
 <body>
     <h1>예약가능 시간표</h1>
-    <div id="timestamp" class="timestamp">마지막 스캔: 로딩 중...</div>
-    <div id="loading" class="loading">로딩 중...</div>
+    <div id="timestamp" class="timestamp">마지막 스캔: Loading...</div>
+    <div id="loading" class="loading">Loading...</div>
     <table id="availability-table" style="display: none;">
         <thead>
             <tr>
@@ -35,23 +35,20 @@
         async function fetchAvailability() {
             try {
                 const response = await fetch('http://129.154.57.126:5000/api/availability');
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
                 const tbody = document.getElementById('availability-body');
                 const timestampDiv = document.getElementById('timestamp');
                 tbody.innerHTML = '';
                 if (data.error) {
-                    tbody.innerHTML = `<tr><td colspan="4">오류: ${data.error}</td></tr>`;
-                    timestampDiv.textContent = '마지막 스캔: 오류';
+                    tbody.innerHTML = `<tr><td colspan="4">Error: ${data.error}</td></tr>`;
+                    timestampDiv.textContent = '마지막 스캔: Error';
                 } else if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="4">예약 가능한 시간이 없습니다.</td></tr>`;
-                    timestampDiv.textContent = '마지막 스캔: 데이터 없음';
+                    tbody.innerHTML = '<tr><td colspan="4">No availability found.</td></tr>';
+                    timestampDiv.textContent = '마지막 스캔: No data';
                 } else {
-                    // Sort popular first
-                    data.sort((a, b) => (b.popular || 0) - (a.popular || 0));
                     data.forEach(slot => {
                         const row = document.createElement('tr');
-                        if (slot.popular) row.classList.add('popular'); /* ← HIGHLIGHT */
+                        if (slot.popular) row.classList.add('popular');
                         row.innerHTML = `
                             <td>${slot.facility}</td>
                             <td>${slot.date}</td>
@@ -60,14 +57,14 @@
                         `;
                         tbody.appendChild(row);
                     });
-                    timestampDiv.textContent = `마지막 스캔: ${data[0].timestamp || '알 수 없음'}`;
+                    timestampDiv.textContent = `마지막 스캔: ${data[0].timestamp || 'Unknown'}`;
                 }
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('availability-table').style.display = 'table';
             } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('loading').textContent = '데이터 로딩 실패';
-                document.getElementById('timestamp').textContent = '마지막 스캔: 오류';
+                console.error('Error fetching availability:', error);
+                document.getElementById('loading').textContent = 'Error loading data.';
+                document.getElementById('timestamp').textContent = '마지막 스캔: Error';
             }
         }
         fetchAvailability();
