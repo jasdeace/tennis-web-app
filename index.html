@@ -13,6 +13,7 @@
         th { background-color: #4CAF50; color: white; }
         tr:hover { background-color: #f5f5f5; }
         .loading { text-align: center; font-size: 18px; color: #555; }
+        .popular { background-color: #fff9c4 !important; font-weight: bold; } /* ← HIGHLIGHT */
     </style>
 </head>
 <body>
@@ -33,7 +34,7 @@
     <script>
         async function fetchAvailability() {
             try {
-                const response = await fetch('https://129.154.57.126:5000/api/availability', { mode: 'no-cors' });
+                const response = await fetch('http://129.154.57.126:5000/api/availability');
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
                 const tbody = document.getElementById('availability-body');
@@ -46,8 +47,11 @@
                     tbody.innerHTML = `<tr><td colspan="4">예약 가능한 시간이 없습니다.</td></tr>`;
                     timestampDiv.textContent = '마지막 스캔: 데이터 없음';
                 } else {
+                    // Sort popular first
+                    data.sort((a, b) => (b.popular || 0) - (a.popular || 0));
                     data.forEach(slot => {
                         const row = document.createElement('tr');
+                        if (slot.popular) row.classList.add('popular'); /* ← HIGHLIGHT */
                         row.innerHTML = `
                             <td>${slot.facility}</td>
                             <td>${slot.date}</td>
