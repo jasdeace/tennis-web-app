@@ -234,8 +234,7 @@ async def scan_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 def start_flask_server():
     context = ('/etc/letsencrypt/live/129.154.57.126/fullchain.pem', '/etc/letsencrypt/live/129.154.57.126/privkey.pem')
-    flask_app.run(host='0.0.0.0', port=5000, ssl_context=context)
-
+    flask_app.run(host='0.0.0.0', port=5000)
 if __name__ == "__main__":
     flask_thread = Thread(target=start_flask_server, daemon=True)
     flask_thread.start()
