@@ -1,9 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>예약가능 시간표</title>
+    <title>예약가능 시간표v2
+    </title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
         h1 { text-align: center; color: #333; }
@@ -17,8 +18,8 @@
 </head>
 <body>
     <h1>예약가능 시간표</h1>
-    <div id="timestamp" class="timestamp">마지막 스캔: Loading...</div>
-    <div id="loading" class="loading">Loading...</div>
+    <div id="timestamp" class="timestamp">마지막 스캔: 로딩 중...</div>
+    <div id="loading" class="loading">로딩 중...</div>
     <table id="availability-table" style="display: none;">
         <thead>
             <tr>
@@ -36,11 +37,9 @@
                 const response = await fetch('http://129.154.57.126:5000/api/availability');
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
-
                 const tbody = document.getElementById('availability-body');
                 const timestampDiv = document.getElementById('timestamp');
                 tbody.innerHTML = '';
-
                 if (data.error) {
                     tbody.innerHTML = `<tr><td colspan="4">오류: ${data.error}</td></tr>`;
                     timestampDiv.textContent = '마지막 스캔: 오류';
@@ -48,10 +47,8 @@
                     tbody.innerHTML = `<tr><td colspan="4">예약 가능한 시간이 없습니다.</td></tr>`;
                     timestampDiv.textContent = '마지막 스캔: 데이터 없음';
                 } else {
-                    data.sort((a, b) => (b.popular || 0) - (a.popular || 0) || b.timestamp.localeCompare(a.timestamp));
                     data.forEach(slot => {
                         const row = document.createElement('tr');
-                        if (slot.popular) row.classList.add('popular');
                         row.innerHTML = `
                             <td>${slot.facility}</td>
                             <td>${slot.date}</td>
@@ -62,11 +59,10 @@
                     });
                     timestampDiv.textContent = `마지막 스캔: ${data[0].timestamp || '알 수 없음'}`;
                 }
-
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('availability-table').style.display = 'table';
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error fetching availability:', error);
                 document.getElementById('loading').textContent = '데이터 로딩 실패';
                 document.getElementById('timestamp').textContent = '마지막 스캔: 오류';
             }
