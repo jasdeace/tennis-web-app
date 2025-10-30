@@ -1,1 +1,1 @@
-web: gunicorn --timeout 60 app:app  # Increase timeout to 60 seconds
+web: gunicorn app:app
