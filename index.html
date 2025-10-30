@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>예약가능 시간표v2
-    </title>
+    <title>예약가능 시간표</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
         h1 { text-align: center; color: #333; }
@@ -62,7 +61,7 @@
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('availability-table').style.display = 'table';
             } catch (error) {
-                console.error('Error fetching availability:', error);
+                console.error('Error:', error);
                 document.getElementById('loading').textContent = '데이터 로딩 실패';
                 document.getElementById('timestamp').textContent = '마지막 스캔: 오류';
             }
