@@ -1,0 +1,6 @@
+type: web
+name: tennis-web
+static:
+  buildCommand: echo "No build"
+  publishDirectory: .
+plan: free
