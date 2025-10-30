@@ -34,7 +34,7 @@
     <script>
         async function fetchAvailability() {
             try {
-                const response = await fetch('/api/availability');
+                const response = await fetch('http://129.154.57.126:5000/api/availability');
                 const data = await response.json();
                 const tbody = document.getElementById('availability-body');
                 const timestampDiv = document.getElementById('timestamp');
