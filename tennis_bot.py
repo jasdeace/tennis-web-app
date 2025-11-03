@@ -18,7 +18,7 @@ import re
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-flask_app = Flask(__name__, template_folder='web_app/templates')
+flask_app = Flask(__name__, template_folder='web_app')
 CORS(flask_app)
 load_dotenv()
 
